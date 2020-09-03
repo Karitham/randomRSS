@@ -4,12 +4,12 @@ import (
 	"encoding/xml"
 	"log"
 
-	"github.com/brianvoe/gofakeit"
+	"github.com/brianvoe/gofakeit/v5"
 )
 
 // Generate a rss-like file and return the content as byte
-func Generate(xmlStruct *Feed) (rssContent []byte) {
-	gofakeit.Seed(0)
+func Generate(xmlStruct *Feed, seed int64) (rssContent []byte) {
+	gofakeit.Seed(seed)
 	gofakeit.Struct(&xmlStruct)
 	rssContent, err := xml.Marshal(&xmlStruct)
 	if err != nil {
