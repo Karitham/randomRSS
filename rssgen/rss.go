@@ -3,66 +3,45 @@ package rssgen
 import (
 	"encoding/xml"
 	"log"
+	"time"
 
 	"github.com/brianvoe/gofakeit/v5"
 )
 
 // Generate a rss-like file and return the content as byte
-func Generate(xmlStruct *Feed, seed int64) (rssContent []byte) {
+func Generate(seed int64, size int64) (rssContent []byte) {
 	gofakeit.Seed(seed)
-	gofakeit.Struct(&xmlStruct)
-	rssContent, err := xml.Marshal(&xmlStruct)
+	var rss = RSS{
+		Channel: ChannelStruct{
+			Item: make([]Item, size),
+		},
+	}
+	gofakeit.Struct(&rss)
+	rssContent, err := xml.Marshal(&rss)
 	if err != nil {
 		log.Println(err)
 	}
 	return
 }
 
-// Feed represent a random RSS file, this is not perfect and may be improved.
-// For now it's just a random jumble, I may later improve this to ressemble an actual feed
-type Feed struct {
-	XMLName  string `fake:"{name}"`
-	Text     string `fake:"{sentence:25}"`
-	Media    string `fake:"{fruit}"`
-	Category struct {
-		Text  string `fake:"{quote}"`
-		Term  string `fake:"{color}"`
-		Label string `fake:"{vehicle}"`
-	} `fake:"{snack}"`
-	Updated string `fake:"{bool}"`
-	Icon    string `fake:"{url}"`
-	ID      string `fake:"{uuid}"`
-	Link    [25]struct {
-		Text string `fake:"{quote}"`
-		Rel  string `fake:"{state}"`
-		Href string `fake:"{timezone}"`
-		Type string `fake:"{beerstyle}"`
-	} `fake:"{url}"`
-	Subtitle string `fake:"{quote}"`
-	Title    string `fake:"{quote}"`
-	Entry    [25]struct {
-		Text   string `fake:"{sentence:15}"`
-		Author struct {
-			Text string `fake:"{sentence:15}"`
-			Name string `fake:"{name}"`
-			URI  string `fake:"{url}"`
-		} `fake:"{username}"`
-		Category struct {
-			Text  string `fake:"{quote}"`
-			Term  string `fake:"{color}"`
-			Label string `fake:"{beer}"`
-		} `fake:"{snack}"`
-		Content struct {
-			Text string `fake:"{sentence:15}"`
-			Type string
-		} `fake:"{diner}"`
-		ID        string `fake:"{uuid}"`
-		Thumbnail struct {
-			Text string `fake:"{sentence:15}"`
-			URL  string `fake:"{imageurl}"`
-		} `fake:"{url}"`
-		Link    string `fake:"{url}"`
-		Updated string `fake:"{bool}"`
-		Title   string `fake:"{bool}"`
-	} `fake:"{fruit}"`
+type RSS struct {
+	XMLName xml.Name `xml:"rss"`
+	Channel ChannelStruct
+}
+
+type Item struct {
+	Title       string    `fake:"{sentence:3}"`
+	PubDate     time.Time `fake:"{date}"`
+	Link        string    `fake:"{url}"`
+	Category    string    `fake:"{bs}"`
+	Description string    `fake:"{loremipsumparagraph}"`
+}
+
+type ChannelStruct struct {
+	Title         string    `fake:"{bs}"`
+	Description   string    `fake:"{sentence:8}"`
+	Link          string    `fake:"{url}"`
+	PubDate       time.Time `fake:"{date}"`
+	LastBuildDate time.Time `fake:"{date}"`
+	Item          []Item
 }
