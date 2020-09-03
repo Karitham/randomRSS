@@ -1,37 +1,31 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/Karitham/randomRSS/rssgen"
 )
 
 func main() {
-	const name = "random.rss"
 	log.SetFlags(log.Lshortfile)
 
 	// Useless
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "to get a rss feed go to http://localhost:8080/rss")
-	})
-
-	// Return a fixed content
-	http.HandleFunc("/rss", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "%s", RSS(1))
+		fmt.Fprintf(w, "to get a rss feed go to http://localhost:8080/fuzz?seed=seed")
 	})
 
 	// Return a random content
 	http.HandleFunc("/fuzz", func(w http.ResponseWriter, req *http.Request) {
-		seed, err := parseRequestURI(req.RequestURI)
+		seed, err := strconv.ParseInt(req.FormValue("seed"), 10, 0)
 		if err != nil {
-			fmt.Fprintf(w, "Wrong URL format, try url:port/fuzz?seed=seed")
+			w.WriteHeader(400)
+			fmt.Fprintf(w, "%s", err)
 		} else {
-			fmt.Fprintf(w, "%s", RSS(int64(seed)))
+			w.WriteHeader(200)
+			fmt.Fprintf(w, "%s", RSS(seed))
 		}
 	})
 
@@ -43,12 +37,4 @@ func main() {
 func RSS(seed int64) (xml []byte) {
 	var rss rssgen.Feed
 	return rssgen.Generate(&rss, seed)
-}
-
-func parseRequestURI(uri string) (seed int, err error) {
-	seed, err = strconv.Atoi((strings.TrimPrefix(uri, "/fuzz?seed=")))
-	if seed == 0 {
-		return 0, errors.New("invalid seed")
-	}
-	return
 }
