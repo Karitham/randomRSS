@@ -17,11 +17,15 @@ func main() {
 // createRRS creates the RSS file and dumps it into the same directory
 func createRRS(xmlStruct *Feed, filename string) {
 	gofakeit.Struct(&xmlStruct)
-	f, err := xml.Marshal(&xmlStruct)
-	if err != nil {
-		log.Println(err)
+	f, errMarshal := xml.Marshal(&xmlStruct)
+	if errMarshal != nil {
+		log.Println(errMarshal)
 	}
-	ioutil.WriteFile(filename, f, os.ModePerm)
+
+	errWrite := ioutil.WriteFile(filename, f, os.ModePerm)
+	if errWrite != nil {
+		log.Println(errWrite)
+	}
 }
 
 // Feed represent a random XML feed
