@@ -22,7 +22,6 @@ func main() {
 		var seed int64 = 1
 		var size int64 = 20
 		var err error
-
 		// Get query parameters
 		seedStr := req.FormValue("seed")
 		sizeStr := req.FormValue("size")
@@ -46,6 +45,7 @@ func main() {
 		}
 
 		w.WriteHeader(200)
+		w.Header().Set("content-type", "xml")
 		fmt.Fprintf(w, "%s", rssgen.Generate(seed, size))
 	})
 
