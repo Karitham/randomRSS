@@ -47,7 +47,7 @@ func main() {
 
 // RSS generate the file and return return it
 func RSS(seed int64) (xml io.ReadSeeker) {
-	var rss rssgen.Feed
+	var rss rssgen.RSS
 	content := rssgen.Generate(&rss, seed)
 	return bytes.NewReader(content)
 }
