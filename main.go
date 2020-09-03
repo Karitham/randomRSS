@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Karitham/randomRSS/rssgen"
 )
@@ -25,9 +22,7 @@ func main() {
 
 	// Return a fixed content
 	http.HandleFunc("/rss", func(w http.ResponseWriter, req *http.Request) {
-		modtime := time.Now()
-		content := RSS(1)
-		http.ServeContent(w, req, name, modtime, content)
+		fmt.Fprintf(w, "%s", RSS(1))
 	})
 
 	// Return a random content
@@ -35,10 +30,9 @@ func main() {
 		seed, err := parseRequestURI(req.RequestURI)
 		if err != nil {
 			fmt.Fprintf(w, "Wrong URL format, try url:port/fuzz?seed=seed")
+		} else {
+			fmt.Fprintf(w, "%s", RSS(int64(seed)))
 		}
-		modtime := time.Now()
-		content := RSS(int64(seed))
-		http.ServeContent(w, req, name, modtime, content)
 	})
 
 	log.Println("Listening on http://localhost:8080...")
@@ -46,10 +40,9 @@ func main() {
 }
 
 // RSS generate the file and return return it
-func RSS(seed int64) (xml io.ReadSeeker) {
+func RSS(seed int64) (xml []byte) {
 	var rss rssgen.Feed
-	content := rssgen.Generate(&rss, seed)
-	return bytes.NewReader(content)
+	return rssgen.Generate(&rss, seed)
 }
 
 func parseRequestURI(uri string) (seed int, err error) {
