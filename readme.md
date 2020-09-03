@@ -1,5 +1,5 @@
 # Random RSS
 
-Random RSS is a small tool to create a random xml file
+To run : `go run .`
 
-Use at your own risk
+You can rhen query a random xml (rss-like) file from [http://localhost:8080/rss](http://localhost:8080/rss)

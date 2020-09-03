@@ -7,7 +7,7 @@ import (
 	"github.com/brianvoe/gofakeit"
 )
 
-// Generate creates the RSS file and dumps it into the specified directory
+// Generate a rss-like file and return the content as byte
 func Generate(xmlStruct *Feed) (rssContent []byte) {
 	gofakeit.Seed(0)
 	gofakeit.Struct(&xmlStruct)
@@ -18,7 +18,8 @@ func Generate(xmlStruct *Feed) (rssContent []byte) {
 	return
 }
 
-// Feed represent a random XML feed
+// Feed represent a random RSS file, this is not perfect and may be improved.
+// For now it's just a random jumble, I may later improve this to ressemble an actual feed
 type Feed struct {
 	XMLName  string `fake:"{name}"`
 	Text     string `fake:"{sentence:25}"`

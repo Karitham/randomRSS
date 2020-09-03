@@ -12,29 +12,29 @@ import (
 )
 
 func main() {
-	Launch()
-}
-
-// Launch runs the server
-func Launch() {
+	const name = "rss"
 	log.SetFlags(log.Lshortfile)
+
+	// Useless
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "to get a rss feed to to http://localhost:8080/rss")
+		fmt.Fprintf(w, "to get a rss feed go to http://localhost:8080/rss")
 	})
+
+	// Send a downloadable content
 	http.HandleFunc("/rss", func(w http.ResponseWriter, req *http.Request) {
-		// tell the browser the returned content should be downloaded
 		modtime := time.Now()
 		content := RSS()
-		const name = "rss"
+		// tell the browser the returned content should be downloaded
 		w.Header().Add("Content-Disposition", "Attachment")
 		http.ServeContent(w, req, name, modtime, content)
 	})
+
 	log.Println("Listening on http://localhost:8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-// RSS is used to create the file and return it as byte
-func RSS() io.ReadSeeker {
+// RSS generate the file and return return it
+func RSS() (xml io.ReadSeeker) {
 	var rss rssgen.Feed
 	content := rssgen.Generate(&rss)
 	return bytes.NewReader(content)
