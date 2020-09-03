@@ -1,5 +1,5 @@
-module github.com/karitham/fakeRSS
+module github.com/Karitham/randomRSS
 
 go 1.14
 
-require github.com/brianvoe/gofakeit/v5 v5.9.1
+require github.com/brianvoe/gofakeit v3.18.0+incompatible
