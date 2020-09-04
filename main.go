@@ -14,11 +14,11 @@ func main() {
 
 	// Useless
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "to get a rss feed go to http://localhost:8080/rss.xml")
+		fmt.Fprintf(w, "to get a rss feed go to http://localhost:8080/rss")
 	})
 
 	// Return a random content
-	http.HandleFunc("/rss.xml", func(w http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/rss", func(w http.ResponseWriter, req *http.Request) {
 		var seed int64 = 1
 		var size int64 = 20
 		var err error
@@ -44,7 +44,7 @@ func main() {
 			}
 		}
 
-		w.Header().Set("content-type", "xml")
+		w.Header().Set("content-type", "application/xml")
 		w.WriteHeader(200)
 		fmt.Fprintf(w, "%s", rssgen.Generate(seed, size))
 	})
